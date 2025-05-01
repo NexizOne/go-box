@@ -3,6 +3,7 @@ package pkg
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -12,29 +13,29 @@ import (
 
 const (
 	// arguments
-	mvFlagMode  = "force"
-	mvAliasMode = "f"
+	cpFlagMode  = "force"
+	cpAliasMode = "f"
 )
 
-// TODO https://man7.org/linux/man-pages/man1/mv.1.html
-var CommandMv *cli.Command = &cli.Command{
-	Name:                  internal.CmdMv,
+// TODO https://man7.org/linux/man-pages/man1/cp.1.html
+var CommandCp *cli.Command = &cli.Command{
+	Name:                  internal.CmdCp,
 	Version:               internal.Version,
-	Usage:                 "Mode file or directory",
+	Usage:                 "Copy file or directory",
 	ArgsUsage:             "[from] [to]",
 	EnableShellCompletion: true,
-	Action:                mvAction,
+	Action:                cpAction,
 	Flags: []cli.Flag{
 		&cli.BoolFlag{
-			Name:    mvFlagMode,
-			Aliases: []string{mvAliasMode},
+			Name:    cpFlagMode,
+			Aliases: []string{cpAliasMode},
 			Value:   false,
 			Usage:   "force",
 		},
 	},
 }
 
-func mvAction(ctx context.Context, cmd *cli.Command) error {
+func cpAction(ctx context.Context, cmd *cli.Command) error {
 	if cmd.Args().Len() != 2 {
 		return cli.Exit("argument count is incorrect required 2", 1)
 	}
@@ -67,7 +68,7 @@ func mvAction(ctx context.Context, cmd *cli.Command) error {
 
 		toInfo, err := os.Stat(to)
 		if os.IsNotExist(err) {
-			if err := os.Rename(fromFile, toFile); err != nil {
+			if err := copyFile(fromFile, toFile); err != nil {
 				fmt.Println(err)
 				continue
 			}
@@ -77,7 +78,7 @@ func mvAction(ctx context.Context, cmd *cli.Command) error {
 				continue
 			}
 
-			if err := os.Rename(fromFile, toFile); err != nil {
+			if err := copyFile(fromFile, toFile); err != nil {
 				fmt.Println(err)
 				continue
 			}
@@ -87,7 +88,7 @@ func mvAction(ctx context.Context, cmd *cli.Command) error {
 				continue
 			}
 
-			if err := os.Rename(fromFile, to); err != nil {
+			if err := copyFile(fromFile, to); err != nil {
 				fmt.Println(err)
 				continue
 			}
@@ -97,10 +98,35 @@ func mvAction(ctx context.Context, cmd *cli.Command) error {
 	return nil
 }
 
-func ifFileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
+func copyFile(src string, dst string) error {
+	sourceFileStat, err := os.Stat(src)
+	if err != nil {
+		return err
 	}
-	return !info.IsDir()
+
+	if !sourceFileStat.Mode().IsRegular() {
+		return fmt.Errorf("%s is not a regular file", src)
+	}
+
+	source, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+
+	if err = os.MkdirAll(filepath.Dir(dst), os.ModePerm); err != nil {
+		return err
+	}
+
+	destination, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destination.Close()
+
+	if _, err := io.Copy(destination, source); err != nil {
+		return err
+	}
+
+	return nil
 }

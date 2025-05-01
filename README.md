@@ -6,6 +6,8 @@
   - [Commands](#commands)
     - [**hash**](#hash)
     - [**mkdir**](#mkdir)
+    - [**mv**](#mv)
+    - [**cp**](#cp)
 
 Provides several Unix like utilities in a single executable file
 
@@ -46,3 +48,7 @@ Create DIRECTORY
 Options:
 
         -m      mode
+
+### **mv**
+
+### **cp**
