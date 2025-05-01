@@ -17,24 +17,24 @@ import (
 
 const (
 	// arguments
-	FlagAlgoritm  = "algorithm"
-	FlagFile      = "file"
-	FlagString    = "string"
-	AliasAlgoritm = "a"
-	AliasFile     = "f"
-	AliasString   = "s"
+	hashFlagAlgoritm  = "algorithm"
+	hashFlagFile      = "file"
+	hashFlagString    = "string"
+	hashAliasAlgoritm = "a"
+	hashAliasFile     = "f"
+	hashAliasString   = "s"
 
 	// algorithms
-	AlgSha256 = "sha256"
-	AlgSha1   = "sha1"
-	AlgMd5    = "md5"
+	hashAlgSha256 = "sha256"
+	hashAlgSha1   = "sha1"
+	hashAlgMd5    = "md5"
 )
 
 // all algorithms
-var AlgAll = []string{AlgSha256, AlgSha1, AlgMd5}
+var AlgAll = []string{hashAlgSha256, hashAlgSha1, hashAlgMd5}
 
 var CommandHash *cli.Command = &cli.Command{
-	Name:                  internal.CommandHash,
+	Name:                  internal.CmdHash,
 	Version:               internal.Version,
 	Usage:                 "Hash string or file",
 	EnableShellCompletion: true,
@@ -42,19 +42,19 @@ var CommandHash *cli.Command = &cli.Command{
 	Action:                hashAction,
 	Flags: []cli.Flag{
 		&cli.StringFlag{
-			Name:    FlagAlgoritm,
-			Aliases: []string{AliasAlgoritm},
-			Value:   AlgSha256,
+			Name:    hashFlagAlgoritm,
+			Aliases: []string{hashAliasAlgoritm},
+			Value:   hashAlgSha256,
 			Usage:   fmt.Sprintf("hashing algorithm (%s)", strings.Join(AlgAll, ", ")),
 		},
 		&cli.StringFlag{
-			Name:    FlagFile,
-			Aliases: []string{AliasFile},
+			Name:    hashFlagFile,
+			Aliases: []string{hashAliasFile},
 			Usage:   "file to hash",
 		},
 		&cli.StringFlag{
-			Name:    FlagString,
-			Aliases: []string{AliasString},
+			Name:    hashFlagString,
+			Aliases: []string{hashAliasString},
 			Usage:   "string to hash",
 		},
 	},
@@ -63,9 +63,9 @@ var CommandHash *cli.Command = &cli.Command{
 func hashAction(ctx context.Context, cmd *cli.Command) error {
 	var hash *string
 	var err error
-	alg := cmd.String(AliasAlgoritm)
+	alg := cmd.String(hashAliasAlgoritm)
 
-	if file := cmd.String(FlagFile); len(file) > 0 {
+	if file := cmd.String(hashFlagFile); len(file) > 0 {
 		hash, err = HashFile(alg, file)
 		if hash == nil {
 			return cli.Exit("no hash", 1)
@@ -78,7 +78,7 @@ func hashAction(ctx context.Context, cmd *cli.Command) error {
 		return nil
 	}
 
-	if text := cmd.String(FlagString); len(text) > 0 {
+	if text := cmd.String(hashFlagString); len(text) > 0 {
 		hash, err = HashString(alg, text)
 		if hash == nil {
 			return cli.Exit("no hash", 1)
@@ -90,7 +90,7 @@ func hashAction(ctx context.Context, cmd *cli.Command) error {
 		return nil
 	}
 
-	return cli.Exit(fmt.Sprintf("Required flag \"%s\" or \"%s\" not set", FlagFile, FlagString), 1)
+	return cli.Exit(fmt.Sprintf("Required flag \"%s\" or \"%s\" not set", hashFlagFile, hashFlagString), 1)
 }
 
 func HashString(alg string, text string) (*string, error) {
@@ -126,11 +126,11 @@ func HashFile(alg string, path string) (*string, error) {
 
 func algorithm(alg string) (hash.Hash, error) {
 	switch name := strings.ToLower(alg); name {
-	case AlgSha256:
+	case hashAlgSha256:
 		return sha256.New(), nil
-	case AlgSha1:
+	case hashAlgSha1:
 		return sha1.New(), nil
-	case AlgMd5:
+	case hashAlgMd5:
 		return md5.New(), nil
 	default:
 		return nil, fmt.Errorf("Unknown algoritm %s", alg)

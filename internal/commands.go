@@ -2,6 +2,7 @@ package internal
 
 const (
 	// commands
-	CmdMkdir    = "mkdir"
-	CommandHash = "hash"
+	CmdMkdir = "mkdir"
+	CmdMv    = "mv"
+	CmdHash  = "hash"
 )

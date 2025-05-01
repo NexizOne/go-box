@@ -14,13 +14,8 @@ import (
 
 const (
 	// arguments
-	FlagMode  = "mode"
-	AliasMode = "m"
-
-	// algorithms
-	// AlgSha256 = "sha256"
-	// AlgSha1   = "sha1"
-	// AlgMd5    = "md5"
+	mkFlagMode  = "mode"
+	mkAliasMode = "m"
 )
 
 var CommandMkdir *cli.Command = &cli.Command{
@@ -32,8 +27,8 @@ var CommandMkdir *cli.Command = &cli.Command{
 	Action:                mkdirAction,
 	Flags: []cli.Flag{
 		&cli.UintFlag{
-			Name:    FlagMode,
-			Aliases: []string{AliasMode},
+			Name:    mkFlagMode,
+			Aliases: []string{mkAliasMode},
 			Value:   777,
 			Usage:   "mode",
 		},
@@ -42,13 +37,13 @@ var CommandMkdir *cli.Command = &cli.Command{
 
 func mkdirAction(ctx context.Context, cmd *cli.Command) error {
 
-	path := cmd.Args().First()
 	if cmd.Args().Len() < 1 {
 		return cli.Exit("path not provided", 1)
 	}
 
+	path := cmd.Args().First()
 	mode := os.ModePerm
-	modeString := fmt.Sprint(cmd.Uint(FlagMode))
+	modeString := fmt.Sprint(cmd.Uint(mkFlagMode))
 	if modeOcta, err := strconv.ParseUint(modeString, 8, 32); err == nil {
 		mode = os.FileMode(modeOcta)
 	} else {
@@ -59,7 +54,6 @@ func mkdirAction(ctx context.Context, cmd *cli.Command) error {
 		return cli.Exit(err, 1)
 	} else if absPath != nil {
 		fmt.Printf("%s\n", *absPath)
-		// fmt.Printf("%04o\n%s\n", mode, mode.String())
 	}
 	return nil
 }
