@@ -21,7 +21,9 @@ var CommandMv *cli.Command = &cli.Command{
 	Name:                  internal.CmdMv,
 	Version:               internal.Version,
 	Usage:                 "Mode file or directory",
-	ArgsUsage:             "[from] [to]",
+	ArgsUsage:             "[from] [to] [options]",
+	Description:           "from\t\tsource (masks supported, example: *.txt)\nto\t\tdestination",
+	CustomHelpTemplate:    cli.SubcommandHelpTemplate,
 	EnableShellCompletion: true,
 	Action:                mvAction,
 	Flags: []cli.Flag{
@@ -59,6 +61,12 @@ func mvAction(ctx context.Context, cmd *cli.Command) error {
 				return cli.Exit(fmt.Sprintf("destination \"%s\" is not a directory", to), 1)
 			}
 		}
+	} else {
+		absFrom, err := filepath.Abs(from)
+		if err != nil {
+			return cli.Exit(fmt.Sprintf("no files in %s\n", from), 1)
+		}
+		return cli.Exit(fmt.Sprintf("no files in %s\n", absFrom), 1)
 	}
 
 	for _, fromFile := range files {
@@ -91,7 +99,9 @@ func mvAction(ctx context.Context, cmd *cli.Command) error {
 				fmt.Println(err)
 				continue
 			}
+			toFile = to
 		}
+		fmt.Printf("move from: %s to: %s\n", fromFile, toFile)
 	}
 
 	return nil

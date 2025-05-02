@@ -13,12 +13,14 @@ import (
 
 func init() {
 	cli.FlagStringer = internal.FlagStringer
+	cli.RootCommandHelpTemplate = internal.RootCommandHelpTemplate
 }
 
 func main() {
 	cmd := &cli.Command{
-		Usage:   "Box of simple utils",
-		Version: fmt.Sprintf("%s %s", internal.Version, internal.Revision),
+		Usage:     "Box of simple utils",
+		Version:   fmt.Sprintf("%s %s", internal.Version, internal.Revision),
+		ArgsUsage: "command [command options]",
 		Commands: []*cli.Command{
 			pkg.CommandCp,
 			pkg.CommandMkdir,

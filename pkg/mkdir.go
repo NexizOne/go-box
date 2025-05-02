@@ -22,7 +22,8 @@ var CommandMkdir *cli.Command = &cli.Command{
 	Name:                  internal.CmdMkdir,
 	Version:               internal.Version,
 	Usage:                 "Creates directory",
-	ArgsUsage:             "[directory]",
+	ArgsUsage:             "[directory] [options]",
+	CustomHelpTemplate:    cli.SubcommandHelpTemplate,
 	EnableShellCompletion: true,
 	Action:                mkdirAction,
 	Flags: []cli.Flag{

@@ -39,6 +39,7 @@ var CommandHash *cli.Command = &cli.Command{
 	Usage:                 "Hash string or file",
 	EnableShellCompletion: true,
 	ArgsUsage:             "[options]",
+	CustomHelpTemplate:    cli.SubcommandHelpTemplate,
 	Action:                hashAction,
 	Flags: []cli.Flag{
 		&cli.StringFlag{

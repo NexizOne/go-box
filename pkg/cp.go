@@ -22,7 +22,9 @@ var CommandCp *cli.Command = &cli.Command{
 	Name:                  internal.CmdCp,
 	Version:               internal.Version,
 	Usage:                 "Copy file or directory",
-	ArgsUsage:             "[from] [to]",
+	ArgsUsage:             "[from] [to] [options]",
+	Description:           "from\t\tsource (masks supported, example: *.txt)\nto\t\tdestination",
+	CustomHelpTemplate:    cli.SubcommandHelpTemplate,
 	EnableShellCompletion: true,
 	Action:                cpAction,
 	Flags: []cli.Flag{
@@ -60,6 +62,12 @@ func cpAction(ctx context.Context, cmd *cli.Command) error {
 				return cli.Exit(fmt.Sprintf("destination \"%s\" is not a directory", to), 1)
 			}
 		}
+	} else {
+		absFrom, err := filepath.Abs(from)
+		if err != nil {
+			return cli.Exit(fmt.Sprintf("no files in %s\n", from), 1)
+		}
+		return cli.Exit(fmt.Sprintf("no files in %s\n", absFrom), 1)
 	}
 
 	for _, fromFile := range files {
@@ -92,7 +100,9 @@ func cpAction(ctx context.Context, cmd *cli.Command) error {
 				fmt.Println(err)
 				continue
 			}
+			toFile = to
 		}
+		fmt.Printf("copy from: %s to: %s\n", fromFile, toFile)
 	}
 
 	return nil

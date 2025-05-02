@@ -6,7 +6,7 @@ import "runtime/debug"
 const (
 	// info
 	Name    = "go-box"
-	Version = "0.3.0"
+	Version = "0.3.1"
 )
 
 // vcs info
