@@ -38,7 +38,7 @@ var CommandCp *cli.Command = &cli.Command{
 }
 
 func cpAction(ctx context.Context, cmd *cli.Command) error {
-	if cmd.Args().Len() != 2 {
+	if cmd.Args().Len() < 2 {
 		return cli.Exit("argument count is incorrect required 2", 1)
 	}
 
@@ -51,7 +51,7 @@ func cpAction(ctx context.Context, cmd *cli.Command) error {
 		return cli.Exit(err, 1)
 	}
 
-	if len(files) > 1 {
+	if len(files) > 0 {
 		info, err := os.Stat(to)
 		if os.IsNotExist(err) {
 			if err = os.MkdirAll(to, os.ModePerm); err != nil {

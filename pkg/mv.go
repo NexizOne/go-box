@@ -50,7 +50,7 @@ func mvAction(ctx context.Context, cmd *cli.Command) error {
 		return cli.Exit(err, 1)
 	}
 
-	if len(files) > 1 {
+	if len(files) > 0 {
 		info, err := os.Stat(to)
 		if os.IsNotExist(err) {
 			if err = os.MkdirAll(to, os.ModePerm); err != nil {
